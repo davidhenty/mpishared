@@ -29,7 +29,7 @@ int main(void)
 
   MPI_Win wintable;
 
-  tablesize = 5;
+  tablesize = 8;
 
   MPI_Init(NULL, NULL);
 
@@ -60,6 +60,10 @@ int main(void)
   localtablesize = 0;
 
   if (noderank == 0) localtablesize = tablesize;
+
+  // Do this if you want all processes to allocate a subsection
+
+  // localtablesize = tablesize/nodesize;
 
   // debug info
 
@@ -107,12 +111,6 @@ int main(void)
 
   // Check we did it right
 
-  /*  for (i=0; i < tablesize; i++)
-    {
-      printf("rank %d, noderank %d, table[%d] = %d\n",
-         rank, noderank, i, table[i]);
-         } */
-
   printarray(rank, "localtable", localtable, 0, localtablesize);
 
   if (noderank == 0)
@@ -126,22 +124,26 @@ int main(void)
 
   table = NULL;
 
-  /*  table = localtable;
-      if (noderank != 0) table = localtable - tablesize; */
+  // Set table manually
+  
+  table = localtable;
 
-  if (noderank == 0)
-    {
-      table = localtable;
-    }
+  if (noderank != 0) table = localtable - tablesize;
 
-  MPI_Bcast(&table, sizeof(table), MPI_BYTE, 0, nodecomm);
+  /*
+   *  Try broadcasting table from rank 0
+   */
+  
+  //  MPI_Bcast(&table, sizeof(table), MPI_BYTE, 0, nodecomm);
 
   // need to get local pointer valid for table on rank 0
 
-  if (noderank != 0)
-    {
-      MPI_Win_shared_query(wintable, 0, &winsize, &windisp, &table);
-    }
+  /*
+   *  Use MPI call to enquire what the noderank 0 pointer is
+   */
+
+  // if (noderank != 0)
+  //   MPI_Win_shared_query(wintable, 0, &winsize, &windisp, &table);
 
   printf("On rank %d, table pointer = %p\n", rank, table);
   
