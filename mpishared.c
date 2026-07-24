@@ -44,7 +44,7 @@ int main(void)
   if (rank == 0)
     {
       printf("MPI version %d, subversion %d\n", version, subversion);
-      printf("Library\n-------\n%s------\n", verstring);
+      printf("Library\n-------\n%s\n------\n", verstring);
     }
 
   // Create node-local communicator
