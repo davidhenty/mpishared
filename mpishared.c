@@ -57,6 +57,9 @@ int main(void)
 
   // Only rank 0 on a node actually allocates memory
 
+  // For portability we need to have at least 1 here as on
+  // cray the pointer stays uninitialised for size 0!!!
+  
   localtablesize = 0;
 
   if (noderank == 0) localtablesize = tablesize;
